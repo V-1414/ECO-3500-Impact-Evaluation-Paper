@@ -1,0 +1,823 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/vidhi/college baby/sem 5/Dev/End term paper/Do/Dev_Paper_Log.log
+  log type:  text
+ opened on:   8 Dec 2025, 20:39:40
+
+. 
+. use "ASER_Panel_Analysis_Ready.dta", clear 
+
+. //This is the final compiled and cleaned dataset that we have used
+. 
+. 
+. *****************************************************
+. ******* SETUP SCRIPT - ALREADY RAN AND SAVED ********
+. *****************************************************
+. 
+. /*
+> 
+> *****************************************************
+> * Creating Dummies for different types of treatment *
+> *****************************************************
+> 
+> ****************** Dummies for Phase I ******************
+> capture drop phase_i
+> gen phase_i = 0
+> 
+> foreach dist in  "Nicobars" "Ysr" "Dibang Valley" "Kamrup Metropolitan" "Vaishali" "Chandigarh" "Raigarh" "Dadra & Nagar Haveli" "Daman" "North Go
+> a" "Surat" "Mahesana" "Gandhinagar" "Ahmadabad" "Rajkot" "Mahendragarh" "Jhajjar" "Rewari" "Sonipat" "Ambala" "Kurukshetra" "Rohtak" "Karnal" "Yam
+> unanagar" "Kaithal" "Bhiwani" "Panipat" "Una" "Jammu" "Pulwama" "Kathua" "Budgam" "Anantnag" "Dhanbad" "Bijapur" "Thrissur" "Lakshadweep" "Morena"
+>  "Gwalior" "Bhind" "Datia" "Bid" "Jalgaon" "Ahmadnagar" "Buldana" "Aurangabad" "Washim" "Kolhapur" "Osmanabad" "Sangli" "Jalna" "Senapati" "Ribhoi
+> " "Saiha" "Longleng" "South West" "North West" "East" "West" "North" "Nayagarh" "Yanam" "Tarn Taran" "Gurdaspur" "Amritsar" "Muktsar" "Mansa" "Pat
+> iala" "Sangrur" "Sahibzada Ajit Singh Nagar" "Fatehgarh Sahib" "Barnala" "Firozpur" "Jhunjhunun" "Sikar" "Karauli" "Ganganagar" "Dhaulpur" "Jaipur
+> " "Dausa" "Alwar" "Bharatpur" "Sawai Madhopur" "North District" "Cuddalore" "Hyderabad" "South Tripura" "Baghpat" "Gautam Buddha Nagar" "Ghaziabad
+> " "Meerut" "Bulandshahr" "Agra" "Muzaffarnagar" "Mahamaya Nagar" "Jhansi" "Mathura" "Pithoragarh" "Champawat" "Kolkata" {
+> 
+>     replace phase_i = 1 if district_name == "`dist'"
+> }
+> 
+> 
+> ****************** Dummies for Phase II ******************
+> capture drop phase_ii
+> gen phase_ii = 0
+>     
+> foreach dist in "Anand" "Amreli" "Patan" "Bhavnagar" "Gurugram" "Jind" "Faridabad" "Hisar" "Fatehabad" "Sirsa" "Panchkula" "Palwal" "Kangra" "Hami
+> rpur" "Samba" "Baramulla" "Ganderbal" "Rajouri" "Srinagar" "Shupiyan" "Kupwara" "Kulgam" "Udhampur" "Bandipore" "Rewa" "Tikamgarh" "Hingoli" "Sola
+> pur" "Pune" "Parbhani" "Nashik" "Latur" "North East" "South" "Faridkot" "Bathinda" "Ludhiana" "Moga" "Rupnagar" "Hoshiarpur" "Kapurthala" "Jalandh
+> ar" "Shahid Bhagat Singh Nagar" "Jaisalmer" "Hanumangarh" "Jodhpur" "Tonk" "Etawah" "Aligarh" "Etah" "Firozabad" "Jalaun" "Bijnor" "Mainpuri" "Ham
+> irpur" "Saharanpur" "Farrukhabad" "Mahoba" "Hardwar" "Dehradun" "Chamoli" {
+>         replace phase_ii = 1 if district_name == "`dist'"
+> }
+> 
+> 
+> ****************** Dummies for Multisectoral Intervention ******************
+> capture drop multisect
+> gen multisect = 0
+> 
+> foreach dist in "Anantapuramu" "Chittoor" "Prakasam" "Krishna" "Kurnool" "Sri Potti Sriramulu Nellore" "Guntur" "West Siang" "Upper Siang" "Lower 
+> Dibang Valley" "Kurung Kumey" "East Kameng" "Patna" "Muzaffarpur" "Bhojpur" "Begusarai" "Lakhisarai" "Samastipur" "Saran" "Khagaria" "Rohtas" "Nal
+> anda" "Purba Champaran" "Madhubani" "Bhagalpur" "Sheikhpura" "Banka" "Nawada" "Bijapur" "Diu" "Surendranagar" "Kheda" "Vadodara" "Banaskantha" "Po
+> rbandar" "Sabarkantha" "Jamnagar" "Junagadh" "Kachchh" "Valsad" "Panch Mahals" "Narmada" "Dohad" "Nuh" "Solan" "Bilaspur" "Mandi" "Shimla" "Sirmau
+> r" "Poonch" "Reasi" "Kishtwar" "Ramban" "Doda" "Leh" "Hazaribagh" "Giridih" "Bokaro" "Kodarma" "Ramgarh" "Ranchi" "Purbi Singhbhum" "Palamu" "Sara
+> ikela Kharsawan" "Deoghar" "Jamtara" "Bagalkot" "Haveri" "Gadag" "Dakshina Kannada" "Shivpuri" "Sheopur" "Chhatarpur" "Indore" "Satna" "Guna" "Nar
+> simhapur" "Sehore" "Sidhi" "Panna" "Dewas" "Hoshangabad" "Rajgarh" "Shajapur" "Bhopal" "Ashoknagar" "Singrauli" "Jabalpur" "Burhanpur" "Sagar" "Vi
+> disha" "Mandsaur" "Neemuch" "Dhar" "Damoh" "Ujjain" "Khandwa" "Raisen" "Khargone" "Ratlam" "Katni" "Jhabua" "Umaria" "Barwani" "Anuppur" "Seoni" "
+> Satara" "Dhule" "Nanded" "Akola" "Mumbai Suburban" "Mumbai City" "Wardha" "Sindhudurg" "Yavatmal" "Thane" "Nagpur" "Raigarh" "Amravati" "Ratnagiri
+> " "Nandurbar" "Tamenglong" "Chandel" "Ukhrul" "Bishnupur" "Thoubal" "Imphal East" "Churachandpur" "Serchhip" "Mon" "Phek" "Tuensang" "Peren" "Moko
+> kchung" "Wokha" "New Delhi" "Central" "Dhenkanal" "Anugul" "Ganjam" "Cuttack" "Khordha" "Debagarh" "Sundargarh" "Sambalpur" "Kendrapara" "Jajapur"
+>  "Jharsuguda" "Bhadrak" "Baleshwar" "Kalahandi" "Bundi" "Jalor" "Sirohi" "Nagaur" "Pali" "Kota" "Ajmer" "Churu" "Rajsamand" "Barmer" "Bikaner" "Jh
+> alawar" "Chittaurgarh" "Baran" "Dungarpur" "Banswara" "Udaipur" "Bhilwara" "Pratapgarh" "Ariyalur" "Dharmapuri" "Namakkal" "Salem" "Perambalur" "V
+> iluppuram" "Tiruvannamalai" "Thiruvallur" "Tiruchirappalli" "Chennai" "Warangal Urban" "Nalgonda" "Mahbubnagar" "Rangareddy" "Adilabad" "Karimnaga
+> r" "Nizamabad" "Kanpur Nagar" "Varanasi" "Prayagraj" "Kasganj" "Auraiya" "Kanpur Dehat" "Kannauj" "Budaun" "Hardoi" "Ballia" "Mirzapur" "Banda" "B
+> hadohi" "Shahjahanpur" "Amroha" "Bareilly" "Chitrakoot" "Fatehpur" "Ghazipur" "Gorakhpur" "Chandauli" "Pilibhit" "Lucknow" "Moradabad" "Lalitpur" 
+> "Pratapgarh" "Jaunpur" "Azamgarh" "Unnao" "Lakhimpur Kheri" "Sultanpur" "Kaushambi" "Sonbhadra" "Deoria" "Gonda" "Mau" "Rae Bareli" "Shrawasti" "K
+> ushinagar" "Basti" "Sitapur" "Maharajganj" "Ayodhya" "Ambedkar Nagar" "Bara Banki" "Bahraich" "Siddharthnagar" "Tehri Garhwal" "Udham Singh Nagar"
+>  "Nainital" "Bageshwar" "Garhwal" "Rudraprayag" "Uttarkashi" "Almora" "Bankura" "Koch Bihar" {
+>         replace multisect = 1 if district_name == "`dist'"
+> }
+> 
+> ****************** Dummies for Media and Advocacy Intervention ******************
+> 
+> capture drop med_adv
+> gen med_adv = 0
+> 
+> foreach dist in "South Andaman" "North & Middle Andaman" "Srikakulam" "Vizianagaram" "Visakhapatnam" "West Godavari" "East Godavari" "Tirap" "Lowe
+> r Subansiri" "Lohit" "Upper Subansiri" "West Kameng" "Papum Pare" "Changlang" "Tawang" "East Siang" "Anjaw" "Dhemaji" "Cachar" "Kokrajhar" "Hailak
+> andi" "Morigaon" "Karbi Anglong" "Lakhimpur" "Sivasagar" "Tinsukia" "Barpeta" "Dibrugarh" "Goalpara" "Golaghat" "Nagaon" "Jorhat" "Sonitpur" "Baks
+> a" "Dima Hasao" "Nalbari" "Kamrup" "Chirang" "Dhubri" "Darrang" "Bongaigaon" "Karimganj" "Udalguri" "Jehanabad" "Munger" "Sheohar" "Madhepura" "Si
+> tamarhi" "Darbhanga" "Saharsa" "Buxar" "Siwan" "Arwal" "Kaimur" "Aurangabad" "Supaul" "Pashchim Champaran" "Purnia" "Gopalganj" "Jamui" "Araria" "
+> Gaya" "Katihar" "Kishanganj" "Janjgir Champa" "Bilaspur" "Surguja" "Durg" "Korba" "Koriya" "Raipur" "Mahasamund" "Dhamtari" "Uttar Bastar Kanker" 
+> "Jashpur" "Kabeerdham" "Rajnandgaon" "Narayanpur" "Bastar" "Dakshin Bastar Dantewada" "South Goa" "Bharuch" "Navsari" "Tapi" "The Dangs" "Chamba" 
+> "Kullu" "Kinnaur" "Lahul & Spiti" "Kargil" "Godda" "Sahibganj" "Garhwa" "Gumla" "Khunti" "Dumka" "Chatra" "Latehar" "Simdega" "Lohardaga" "Pakur" 
+> "Pashchimi Singhbhum" "Belagavi" "Mandya" "Bidar" "Kalaburagi" "Dharwad" "Bengaluru Urban" "Chitradurga" "Davanagere" "Raichur" "Bengaluru Rural" 
+> "Yadgir" "Chamarajanagar" "Chikkaballapura" "Uttara Kannada" "Koppal" "Udupi" "Tumakuru" "Ballari" "Shivamogga" "Mysuru" "Kolar" "Ramanagara" "Chi
+> kkamagaluru" "Hassan" "Kodagu" "Alappuzha" "Ernakulam" "Kasaragod" "Idukki" "Kottayam" "Thiruvananthapuram" "Wayanad" "Malappuram" "Palakkad" "Koz
+> hikode" "Kannur" "Kollam" "Pathanamthitta" "Harda" "Shahdol" "Chhindwara" "Betul" "Balaghat" "Dindori" "Mandla" "Alirajpur" "Bhandara" "Chandrapur
+> " "Gondiya" "Gadchiroli" "Imphal West" "East Khasi Hills" "West Khasi Hills" "South Garo Hills" "Jaintia Hills" "West Garo Hills" "East Garo Hills
+> " "Lunglei" "Lawngtlai" "Champhai" "Mamit" "Aizawl" "Kolasib" "Zunheboto" "Kiphire" "Dimapur" "Kohima" "Jagatsinghapur" "Puri" "Subarnapur" "Balan
+> gir" "Bargarh" "Mayurbhanj" "Kandhamal" "Rayagada" "Kendujhar" "Gajapati" "Baudh" "Koraput" "Nuapada" "Malkangiri" "Nabarangapur" "Karaikal" "Pudu
+> cherry" "Mahe" "South District" "East District" "West District" "Krishnagiri" "Madurai" "Dindigul" "Theni" "Karur" "Vellore" "Tiruppur" "Erode" "V
+> irudhunagar" "Coimbatore" "Thanjavur" "Thiruvarur" "Nagapattinam" "Kancheepuram" "Sivaganga" "Pudukkottai" "Tirunelveli" "Ramanathapuram" "Thoothu
+> kkudi" "Kanniyakumari" "The Nilgiris" "Medak" "Khammam" "West Tripura" "Dhalai" "North Tripura" "Rampur" "Sant Kabir Nagar" "Balrampur" "Purba Med
+> inipur" "Maldah" "Barddhaman" "Hugli" "Uttar Dinajpur" "Puruliya" "Darjiling" "Jalpaiguri" "North Twenty Four Parganas" "Dakshin Dinajpur" "Birbhu
+> m" "Nadia" "Haora" "South Twenty Four Parganas" "Paschim Medinipur" "Murshidabad" {
+>         
+>         replace med_adv = 1 if district_name == "`dist'"
+> }
+> 
+> ****************** Dummy for Overall Intervention ******************
+> capture drop B3P
+> gen B3P = 0
+> 
+> replace B3P = 1 if phase_i == 1 | phase_ii == 1 | multisect == 1 | med_adv == 1
+> 
+> ***********post for Phase I and II ***********
+> gen post_1 = (year >= 2015)
+> 
+> ***********post for Pan India Expansion ***********
+> gen post_2 = (year >= 2018)
+> 
+> //checking number of districts without any intervention
+> codebook district_name if B3P == 0
+> 
+> */
+. 
+. 
+. ****************************************
+. * Generating Other Necessary Variables *
+. ****************************************
+. capture drop dropout_class5
+
+. gen dropout_class5 = oos_dropout_class == 5 if oos_dropout == 1
+(7,819,506 missing values generated)
+
+. 
+. 
+. capture drop dropout_class8
+
+. gen dropout_class8 = oos_dropout_class == 8 if oos_dropout == 1
+(7,819,506 missing values generated)
+
+. 
+. * numeric ID for each unique district name
+. egen district_id = group(district_name)
+
+. 
+. 
+. ********************
+. * Defining Controls
+. ********************
+. * Child Controls
+. gen takes_tuition = (tuition == 1)
+
+. gen private_school = (school_type == 2)
+
+. 
+. * Parental Controls
+. gen mom_edu = (mother_gone_to_school == 1)
+
+. gen dad_edu = (father_gone_to_school == 1)
+
+. 
+. * Wealth Controls
+. gen pucca_house = (hh_type == 1)
+
+. gen has_tv = (hh_tv == 1)
+
+. gen has_elec = (hh_electricity_conn == 1)
+
+. 
+. * Village Controls
+. gen has_road = (vlg_pucca_road == 1)
+
+. gen has_prim_school = (vlg_govt_primary_school_1_5 ==1)
+
+. gen has_mid_school = (vlg_govt_middle_school_1_8 ==1)
+
+. gen has_sec_school = (vlg_govt_secondary_school_1_10 == 1)
+
+. 
+. 
+. global child_controls  "takes_tuition private_school"
+
+. global parent_controls "mom_edu dad_edu"
+
+. global wealth_controls "pucca_house has_tv has_elec"
+
+. global village_controls "has_road has_prim_school has_mid_school has_sec_school"
+
+. 
+. global all_controls "$child_controls $parent_controls $wealth_controls $village_controls"
+
+. 
+. 
+. **********************
+. * Summary Statistics *
+. **********************
+. 
+. * summary stats for test scores by class
+. preserve
+
+. keep if child_gender == 2
+(4,487,056 observations deleted)
+
+. 
+. foreach c in 1 2 3 {
+  2.     di "----------------------------------------"
+  3.     di "Summary Statistics for Class `c'"
+  4.     di "----------------------------------------"
+  5. 
+.     summarize read_code math_code if school_class == `c'
+  6. }
+----------------------------------------
+Summary Statistics for Class 1
+----------------------------------------
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   read_code |    299,231    1.989303    1.009146          1          5
+   math_code |    297,680    1.988498    .9062613          1          5
+----------------------------------------
+Summary Statistics for Class 2
+----------------------------------------
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   read_code |    286,453    2.686619    1.185374          1          5
+   math_code |    285,309    2.559544    .9767792          1          5
+----------------------------------------
+Summary Statistics for Class 3
+----------------------------------------
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   read_code |    286,239    3.277957     1.26061          1          5
+   math_code |    285,290     3.02625    1.050222          1          5
+
+. restore
+
+. 
+. * summary stats for dropout distribution
+. 
+. preserve
+
+. keep if child_gender == 2
+(4,487,056 observations deleted)
+
+. 
+. di "----------------------------------------"
+----------------------------------------
+
+. di "Distribution of Dropout Classes (as %)"
+Distribution of Dropout Classes (as %)
+
+. di "----------------------------------------"
+----------------------------------------
+
+. tab oos_dropout_class if oos_dropout == 1
+
+oos_dropout |
+     _class |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        101        0.12        0.12
+          1 |      2,346        2.85        2.98
+          2 |      4,437        5.40        8.38
+          3 |      5,702        6.94       15.32
+          4 |      5,782        7.04       22.35
+          5 |     17,124       20.84       43.19
+          6 |      6,748        8.21       51.40
+          7 |      8,195        9.97       61.38
+          8 |     16,933       20.61       81.98
+          9 |      6,946        8.45       90.44
+         10 |      7,072        8.61       99.04
+         11 |        389        0.47       99.52
+         12 |        393        0.48       99.99
+         99 |          5        0.01      100.00
+------------+-----------------------------------
+      Total |     82,173      100.00
+
+. 
+. restore
+
+. 
+. 
+. 
+. * Summarizing treatment by district level
+. preserve
+
+. keep district_id district_name phase_i phase_ii multisect med_adv B3P
+
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(8,015,913 observations deleted)
+
+. summarize phase_i phase_ii multisect med_adv B3P
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     phase_i |        649    .1386749    .3458735          0          1
+    phase_ii |        649    .0878274    .2832621          0          1
+   multisect |        649    .3389831    .4737292          0          1
+     med_adv |        649    .3420647    .4747671          0          1
+         B3P |        649    .9013867     .298372          0          1
+
+. restore
+
+. 
+. * Summarizing controls for girls at HH level
+. summarize $all_controls if child_gender == 2
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+takes_tuit~n |  3,529,506    .1514314    .3584689          0          1
+private_sc~l |  3,529,506    .2249918     .417577          0          1
+     mom_edu |  3,529,506    .4936714      .49996          0          1
+     dad_edu |  3,529,506     .565238    .4957258          0          1
+ pucca_house |  3,529,506     .357711    .4793265          0          1
+-------------+---------------------------------------------------------
+      has_tv |  3,529,506    .4281135    .4948054          0          1
+    has_elec |  3,529,506    .6563936    .4749117          0          1
+    has_road |  3,529,506    .7174126    .4502575          0          1
+has_prim_s~l |  3,529,506    .7692521    .4213115          0          1
+has_mid_sc~l |  3,529,506    .4953076    .4999781          0          1
+-------------+---------------------------------------------------------
+has_sec_sc~l |  3,529,506    .1976866    .3982545          0          1
+
+. 
+. 
+. **********************************
+. * DiD with Two-Way Fixed Effects *
+. **********************************
+. 
+. ****************** Reading Skills ******************
+. 
+. * Loop through classes 1, 2, and 3
+. foreach c of numlist 1 2 3 {
+  2.         
+.     * Display a message in the output window to track progress
+.     display as result "--------------------------------------"
+  3.     display as result "Running regression for School Class: `c'"
+  4.     display as result "--------------------------------------"
+  5. 
+.     * Run the regression using the local macro `c' for the class        
+.         reghdfe read_code phase_i##post_1 phase_ii##post_1 $all_controls ///
+>         if child_gender == 2 & school_class == `c', ///
+>         absorb(year district_id) cluster(district_id)
+  6.     
+.     * Store the results for later table generation (naming them class_3, class_2, etc.)
+.     estimates store class_`c'
+  7. }
+--------------------------------------
+Running regression for School Class: 1
+--------------------------------------
+(MWFE estimator converged in 6 iterations)
+note: 1bn.phase_i is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.post_1 is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.phase_ii is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    299,231
+Absorbing 2 HDFE groups                           F(  13,    648) =     323.40
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.1994
+                                                  Adj R-squared   =     0.1976
+                                                  Within R-sq.    =     0.0951
+Number of clusters (district_id) =        649     Root MSE        =     0.9040
+
+                             (Std. err. adjusted for 649 clusters in district_id)
+---------------------------------------------------------------------------------
+                |               Robust
+      read_code | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+      1.phase_i |          0  (omitted)
+       1.post_1 |          0  (omitted)
+                |
+ phase_i#post_1 |
+           1 1  |   .0644159   .0340333     1.89   0.059    -.0024131    .1312448
+                |
+     1.phase_ii |          0  (omitted)
+                |
+phase_ii#post_1 |
+           1 1  |   .1206781   .0315239     3.83   0.000     .0587767    .1825794
+                |
+  takes_tuition |   .2731933   .0085598    31.92   0.000      .256385    .2900016
+ private_school |   .4975691   .0115197    43.19   0.000     .4749486    .5201896
+        mom_edu |   .1526176    .005541    27.54   0.000     .1417371     .163498
+        dad_edu |   .0658173   .0055442    11.87   0.000     .0549305    .0767041
+    pucca_house |   .1290454   .0058542    22.04   0.000     .1175499    .1405409
+         has_tv |   .1135618   .0064081    17.72   0.000     .1009786     .126145
+       has_elec |   .0419582   .0073072     5.74   0.000     .0276095    .0563069
+       has_road |   .0058729   .0066787     0.88   0.380    -.0072415    .0189874
+has_prim_school |    .023669   .0074586     3.17   0.002     .0090231     .038315
+ has_mid_school |   .0137263   .0055659     2.47   0.014     .0027969    .0246558
+ has_sec_school |   .0227082   .0068642     3.31   0.001     .0092293     .036187
+          _cons |   1.559701   .0102108   152.75   0.000     1.539651    1.579752
+---------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+        year |        12           1          11     |
+ district_id |       649         649           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+--------------------------------------
+Running regression for School Class: 2
+--------------------------------------
+(MWFE estimator converged in 6 iterations)
+note: 1bn.phase_i is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.post_1 is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.phase_ii is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    286,453
+Absorbing 2 HDFE groups                           F(  13,    648) =     366.64
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.1945
+                                                  Adj R-squared   =     0.1926
+                                                  Within R-sq.    =     0.0898
+Number of clusters (district_id) =        649     Root MSE        =     1.0651
+
+                             (Std. err. adjusted for 649 clusters in district_id)
+---------------------------------------------------------------------------------
+                |               Robust
+      read_code | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+      1.phase_i |          0  (omitted)
+       1.post_1 |          0  (omitted)
+                |
+ phase_i#post_1 |
+           1 1  |   .1035291   .0348618     2.97   0.003     .0350735    .1719848
+                |
+     1.phase_ii |          0  (omitted)
+                |
+phase_ii#post_1 |
+           1 1  |   .2061264   .0410562     5.02   0.000     .1255071    .2867456
+                |
+  takes_tuition |   .2716057   .0099916    27.18   0.000      .251986    .2912255
+ private_school |    .518908   .0139166    37.29   0.000      .491581     .546235
+        mom_edu |   .2285804   .0071915    31.78   0.000     .2144589     .242702
+        dad_edu |   .1105286   .0065206    16.95   0.000     .0977245    .1233326
+    pucca_house |   .1403564    .006927    20.26   0.000     .1267543    .1539586
+         has_tv |   .1556036   .0080299    19.38   0.000     .1398358    .1713713
+       has_elec |   .0737827   .0095779     7.70   0.000     .0549754    .0925901
+       has_road |   .0061222   .0076213     0.80   0.422    -.0088433    .0210877
+has_prim_school |   .0277129   .0083174     3.33   0.001     .0113806    .0440452
+ has_mid_school |   .0028665   .0067557     0.42   0.671    -.0103993    .0161322
+ has_sec_school |  -.0015678   .0077568    -0.20   0.840    -.0167994    .0136637
+          _cons |   2.151292   .0114748   187.48   0.000      2.12876    2.173824
+---------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+        year |        12           1          11     |
+ district_id |       649         649           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+--------------------------------------
+Running regression for School Class: 3
+--------------------------------------
+(MWFE estimator converged in 6 iterations)
+note: 1bn.phase_i is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.post_1 is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.phase_ii is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    286,239
+Absorbing 2 HDFE groups                           F(  13,    648) =     338.59
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.1897
+                                                  Adj R-squared   =     0.1877
+                                                  Within R-sq.    =     0.0871
+Number of clusters (district_id) =        649     Root MSE        =     1.1361
+
+                             (Std. err. adjusted for 649 clusters in district_id)
+---------------------------------------------------------------------------------
+                |               Robust
+      read_code | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+      1.phase_i |          0  (omitted)
+       1.post_1 |          0  (omitted)
+                |
+ phase_i#post_1 |
+           1 1  |   .1053451   .0365547     2.88   0.004     .0335651    .1771251
+                |
+     1.phase_ii |          0  (omitted)
+                |
+phase_ii#post_1 |
+           1 1  |   .1907744   .0502481     3.80   0.000     .0921057    .2894431
+                |
+  takes_tuition |   .2512298   .0106744    23.54   0.000     .2302693    .2721903
+ private_school |   .5085476   .0158059    32.17   0.000     .4775107    .5395845
+        mom_edu |   .2718809   .0080482    33.78   0.000     .2560772    .2876845
+        dad_edu |   .1573909   .0076884    20.47   0.000     .1422937    .1724881
+    pucca_house |     .14843   .0076937    19.29   0.000     .1333224    .1635375
+         has_tv |   .1885847   .0095199    19.81   0.000     .1698912    .2072783
+       has_elec |   .0974162   .0104635     9.31   0.000     .0768698    .1179626
+       has_road |   .0007534   .0085368     0.09   0.930    -.0160098    .0175165
+has_prim_school |   .0239432   .0101925     2.35   0.019     .0039289    .0439574
+ has_mid_school |  -.0099733   .0075077    -1.33   0.185    -.0247156     .004769
+ has_sec_school |   .0041808   .0081303     0.51   0.607     -.011784    .0201457
+          _cons |   2.693856    .013181   204.37   0.000     2.667974    2.719739
+---------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+        year |        12           1          11     |
+ district_id |       649         649           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. 
+. 
+. ****************** Math Skills ******************
+. foreach c of numlist 1 2 3 {
+  2.         
+.     * Display a message in the output window to track progress
+.     display as result "--------------------------------------"
+  3.     display as result "Running regression for School Class: `c'"
+  4.     display as result "--------------------------------------"
+  5. 
+.     * Run the regression using the local macro `c' for the class
+.     reghdfe math_code phase_i##post_1 phase_ii##post_1 $all_controls ///
+>         if child_gender == 2 & school_class == `c', ///
+>         absorb(year district_id) cluster(district_id)
+  6.     
+.     * Store the results for later table generation (naming them class_3, class_2, etc.)
+.     estimates store class_`c'
+  7. }
+--------------------------------------
+Running regression for School Class: 1
+--------------------------------------
+(MWFE estimator converged in 6 iterations)
+note: 1bn.phase_i is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.post_1 is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.phase_ii is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    297,680
+Absorbing 2 HDFE groups                           F(  13,    648) =     376.64
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.2294
+                                                  Adj R-squared   =     0.2277
+                                                  Within R-sq.    =     0.1006
+Number of clusters (district_id) =        649     Root MSE        =     0.7964
+
+                             (Std. err. adjusted for 649 clusters in district_id)
+---------------------------------------------------------------------------------
+                |               Robust
+      math_code | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+      1.phase_i |          0  (omitted)
+       1.post_1 |          0  (omitted)
+                |
+ phase_i#post_1 |
+           1 1  |   .0209401   .0281557     0.74   0.457    -.0343472    .0762275
+                |
+     1.phase_ii |          0  (omitted)
+                |
+phase_ii#post_1 |
+           1 1  |   .0908068   .0280769     3.23   0.001     .0356742    .1459395
+                |
+  takes_tuition |   .2554487   .0074217    34.42   0.000     .2408753    .2700222
+ private_school |   .4638417    .009503    48.81   0.000     .4451813    .4825021
+        mom_edu |   .1248534   .0049708    25.12   0.000     .1150926    .1346143
+        dad_edu |   .0593077   .0047393    12.51   0.000     .0500016    .0686139
+    pucca_house |   .1119997   .0052281    21.42   0.000     .1017336    .1222657
+         has_tv |   .0959831   .0057806    16.60   0.000     .0846322    .1073341
+       has_elec |   .0376225   .0067455     5.58   0.000     .0243768    .0508681
+       has_road |   .0084133   .0061778     1.36   0.174    -.0037176    .0205443
+has_prim_school |   .0249213   .0066314     3.76   0.000     .0118997    .0379429
+ has_mid_school |   .0123732   .0050996     2.43   0.016     .0023594    .0223869
+ has_sec_school |   .0166813   .0057893     2.88   0.004     .0053132    .0280493
+          _cons |   1.603546   .0089537   179.09   0.000     1.585964    1.621127
+---------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+        year |        12           1          11     |
+ district_id |       649         649           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+--------------------------------------
+Running regression for School Class: 2
+--------------------------------------
+(MWFE estimator converged in 6 iterations)
+note: 1bn.phase_i is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.post_1 is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.phase_ii is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    285,309
+Absorbing 2 HDFE groups                           F(  13,    648) =     337.42
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.2064
+                                                  Adj R-squared   =     0.2045
+                                                  Within R-sq.    =     0.0869
+Number of clusters (district_id) =        649     Root MSE        =     0.8712
+
+                             (Std. err. adjusted for 649 clusters in district_id)
+---------------------------------------------------------------------------------
+                |               Robust
+      math_code | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+      1.phase_i |          0  (omitted)
+       1.post_1 |          0  (omitted)
+                |
+ phase_i#post_1 |
+           1 1  |   .0124834   .0304676     0.41   0.682    -.0473437    .0723106
+                |
+     1.phase_ii |          0  (omitted)
+                |
+phase_ii#post_1 |
+           1 1  |   .0847097   .0393351     2.15   0.032       .00747    .1619494
+                |
+  takes_tuition |   .2442717   .0085003    28.74   0.000     .2275802    .2609632
+ private_school |    .424709   .0104916    40.48   0.000     .4041074    .4453106
+        mom_edu |   .1697514   .0059131    28.71   0.000     .1581403    .1813625
+        dad_edu |   .0810254    .005376    15.07   0.000     .0704689    .0915818
+    pucca_house |   .1177679   .0055801    21.11   0.000     .1068107    .1287251
+         has_tv |   .1187016   .0065667    18.08   0.000      .105807    .1315961
+       has_elec |   .0461107   .0077572     5.94   0.000     .0308783    .0613431
+       has_road |   .0082056   .0063077     1.30   0.194    -.0041804    .0205916
+has_prim_school |   .0223102    .007323     3.05   0.002     .0079306    .0366898
+ has_mid_school |   .0162453   .0057698     2.82   0.005     .0049156     .027575
+ has_sec_school |  -.0008698   .0063149    -0.14   0.890    -.0132699    .0115304
+          _cons |   2.139153   .0100283   213.31   0.000     2.119461    2.158845
+---------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+        year |        12           1          11     |
+ district_id |       649         649           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+--------------------------------------
+Running regression for School Class: 3
+--------------------------------------
+(MWFE estimator converged in 6 iterations)
+note: 1bn.phase_i is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.post_1 is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.phase_ii is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+
+HDFE Linear regression                            Number of obs   =    285,290
+Absorbing 2 HDFE groups                           F(  13,    648) =     326.83
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.2072
+                                                  Adj R-squared   =     0.2053
+                                                  Within R-sq.    =     0.0869
+Number of clusters (district_id) =        649     Root MSE        =     0.9362
+
+                             (Std. err. adjusted for 649 clusters in district_id)
+---------------------------------------------------------------------------------
+                |               Robust
+      math_code | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+      1.phase_i |          0  (omitted)
+       1.post_1 |          0  (omitted)
+                |
+ phase_i#post_1 |
+           1 1  |   .0155806   .0322093     0.48   0.629    -.0476667    .0788278
+                |
+     1.phase_ii |          0  (omitted)
+                |
+phase_ii#post_1 |
+           1 1  |   .0913452   .0466655     1.96   0.051    -.0002887     .182979
+                |
+  takes_tuition |   .2511895    .009505    26.43   0.000     .2325252    .2698538
+ private_school |   .4337313   .0117353    36.96   0.000     .4106876    .4567751
+        mom_edu |   .2069506   .0066214    31.25   0.000     .1939486    .2199526
+        dad_edu |   .1125327    .006259    17.98   0.000     .1002422    .1248231
+    pucca_house |   .1315738   .0063667    20.67   0.000      .119072    .1440756
+         has_tv |   .1455355   .0080623    18.05   0.000     .1297041    .1613669
+       has_elec |   .0498439   .0087466     5.70   0.000     .0326689     .067019
+       has_road |  -.0049488   .0073541    -0.67   0.501    -.0193895    .0094919
+has_prim_school |   .0327297   .0082024     3.99   0.000     .0166232    .0488362
+ has_mid_school |   .0011968   .0063565     0.19   0.851     -.011285    .0136786
+ has_sec_school |   .0104832   .0069175     1.52   0.130    -.0031002    .0240666
+          _cons |   2.564167   .0108228   236.92   0.000     2.542915    2.585419
+---------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+        year |        12           1          11     |
+ district_id |       649         649           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. 
+. 
+. ****************** Class Dropout ******************
+. 
+. * class at which dropped out of school
+. 
+. reghdfe dropout_class5 phase_i##post_1 phase_ii##post_1 $all_controls ///
+>         if child_gender == 2 & oos_dropout == 1, ///
+>         absorb(year district_id) cluster(district_id)
+(dropped 5 singleton observations)
+(MWFE estimator converged in 7 iterations)
+note: 1bn.phase_i is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.post_1 is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.phase_ii is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: private_school omitted because of collinearity
+
+HDFE Linear regression                            Number of obs   =     98,099
+Absorbing 2 HDFE groups                           F(  12,    643) =      45.00
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.0850
+                                                  Adj R-squared   =     0.0787
+                                                  Within R-sq.    =     0.0104
+Number of clusters (district_id) =        644     Root MSE        =     0.3643
+
+                             (Std. err. adjusted for 644 clusters in district_id)
+---------------------------------------------------------------------------------
+                |               Robust
+ dropout_class5 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+      1.phase_i |          0  (omitted)
+       1.post_1 |          0  (omitted)
+                |
+ phase_i#post_1 |
+           1 1  |  -.0112583   .0113765    -0.99   0.323    -.0335978    .0110812
+                |
+     1.phase_ii |          0  (omitted)
+                |
+phase_ii#post_1 |
+           1 1  |    .006774   .0136575     0.50   0.620    -.0200447    .0335926
+                |
+  takes_tuition |  -.0076206   .0109675    -0.69   0.487     -.029157    .0139158
+ private_school |          0  (omitted)
+        mom_edu |  -.0310311   .0034486    -9.00   0.000    -.0378031   -.0242592
+        dad_edu |  -.0267837   .0031887    -8.40   0.000    -.0330452   -.0205222
+    pucca_house |  -.0183498   .0037494    -4.89   0.000    -.0257123   -.0109872
+         has_tv |  -.0297155   .0035497    -8.37   0.000    -.0366858   -.0227452
+       has_elec |  -.0117783   .0042948    -2.74   0.006    -.0202119   -.0033448
+       has_road |  -.0009605   .0041902    -0.23   0.819    -.0091886    .0072675
+has_prim_school |   .0360948   .0043835     8.23   0.000     .0274872    .0447025
+ has_mid_school |  -.0536389   .0042651   -12.58   0.000    -.0620142   -.0452636
+ has_sec_school |  -.0014846   .0040932    -0.36   0.717    -.0095223    .0065531
+          _cons |   .2062072   .0051409    40.11   0.000     .1961123    .2163021
+---------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+        year |        12           1          11     |
+ district_id |       644         644           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. 
+. reghdfe dropout_class8 phase_i##post_1 phase_ii##post_1 $all_controls ///
+>         if child_gender == 2 & oos_dropout == 1, ///
+>         absorb(year district_id) cluster(district_id)
+(dropped 5 singleton observations)
+(MWFE estimator converged in 7 iterations)
+note: 1bn.phase_i is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.post_1 is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: 1bn.phase_ii is probably collinear with the fixed effects (all partialled-out values are close to zero; tol = 1.0e-09)
+note: private_school omitted because of collinearity
+
+HDFE Linear regression                            Number of obs   =     98,099
+Absorbing 2 HDFE groups                           F(  12,    643) =      27.01
+Statistics robust to heteroskedasticity           Prob > F        =     0.0000
+                                                  R-squared       =     0.0957
+                                                  Adj R-squared   =     0.0895
+                                                  Within R-sq.    =     0.0059
+Number of clusters (district_id) =        644     Root MSE        =     0.3606
+
+                             (Std. err. adjusted for 644 clusters in district_id)
+---------------------------------------------------------------------------------
+                |               Robust
+ dropout_class8 | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+      1.phase_i |          0  (omitted)
+       1.post_1 |          0  (omitted)
+                |
+ phase_i#post_1 |
+           1 1  |   -.001577   .0141148    -0.11   0.911    -.0292937    .0261397
+                |
+     1.phase_ii |          0  (omitted)
+                |
+phase_ii#post_1 |
+           1 1  |   -.007633   .0165445    -0.46   0.645    -.0401208    .0248548
+                |
+  takes_tuition |  -.0183271   .0107565    -1.70   0.089    -.0394493    .0027951
+ private_school |          0  (omitted)
+        mom_edu |   .0082929   .0038887     2.13   0.033     .0006569     .015929
+        dad_edu |   .0256816   .0033446     7.68   0.000     .0191141    .0322492
+    pucca_house |   .0113207   .0038183     2.96   0.003     .0038228    .0188186
+         has_tv |   .0158901   .0040905     3.88   0.000     .0078578    .0239224
+       has_elec |   .0106394   .0040851     2.60   0.009     .0026176    .0186613
+       has_road |   .0010987   .0037391     0.29   0.769    -.0062436     .008441
+has_prim_school |  -.0098576   .0049374    -2.00   0.046     -.019553   -.0001622
+ has_mid_school |   .0481697   .0035736    13.48   0.000     .0411523    .0551871
+ has_sec_school |  -.0367458   .0041248    -8.91   0.000    -.0448455   -.0286461
+          _cons |   .1398174   .0049871    28.04   0.000     .1300244    .1496104
+---------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+        year |        12           1          11     |
+ district_id |       644         644           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/vidhi/college baby/sem 5/Dev/End term paper/Do/Dev_Paper_Log.log
+  log type:  text
+ closed on:   8 Dec 2025, 20:42:06
+----------------------------------------------------------------------------------------------------------------------------------------------------
